@@ -43,7 +43,9 @@ const useFetch = <T>({ endpoint, method = 'GET' }: Props) => {
       setState({ loading: false, data: json });
       return json;
     } catch (e) {
-      setState({ loading: false, error: e as string });
+      if (e instanceof Error) {
+        setState({ loading: false, error: e.message });
+      }
     }
   };
 

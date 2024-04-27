@@ -6,7 +6,6 @@ import { User } from './types.ts';
 import Button from '../../components/Button';
 import { useEffect } from 'react';
 import HelperButtons from './HelperButtons.tsx';
-import AddUserModal from './AddUserModal.tsx';
 import EditUserModal from './EditUserModal.tsx';
 
 const columns = [
@@ -19,13 +18,11 @@ const columns = [
 
 interface State {
   openUser?: User;
-  isAddNewModalOpen: boolean;
 }
 
 const Users = () => {
   const [state, setState] = useMergeState<State>({
     openUser: undefined,
-    isAddNewModalOpen: false,
   });
 
   const { error, data, loading, fetchData } = useFetch<User[]>({
@@ -43,10 +40,6 @@ const Users = () => {
     setState({ openUser: user });
   };
 
-  const toggleAddNewModal = () => {
-    setState({ isAddNewModalOpen: !state.isAddNewModalOpen });
-  };
-
   const rows: Rows = {
     uniqueId: 'uuid',
     data: data.map((user) => ({
@@ -62,13 +55,8 @@ const Users = () => {
 
   return (
     <div>
-      <HelperButtons toggleAddNewModal={toggleAddNewModal} />
+      <HelperButtons />
       <Table rows={rows} columns={columns} />
-      <AddUserModal
-        isOpen={state.isAddNewModalOpen}
-        title="Add new user"
-        close={toggleAddNewModal}
-      />
       <EditUserModal
         isOpen={Boolean(state.openUser)}
         title={state.openUser?.shopDomain || ''}
