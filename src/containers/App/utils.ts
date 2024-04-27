@@ -1,4 +1,4 @@
 export const ROUTES = {
-  DASHBOARD: { url: '/', title: 'Dashboard' },
-  USERS: { url: '/users', title: 'Users' },
+  USERS: { url: '/', title: 'Users' },
+  DASHBOARD: { url: '/dashboard', title: 'Dashboard' },
 };

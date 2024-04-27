@@ -1,11 +1,9 @@
 import style from './style.module.sass';
 import { ReactNode, useRef } from 'react';
 import useClickOutside from '../../hooks/useOutsideClick.ts';
+import { ModalWrapperProps } from '../ModalWrapper';
 
-interface Props {
-  isOpen: boolean;
-  close: () => void;
-  title: string;
+interface Props extends ModalWrapperProps {
   children: ReactNode;
 }
 

@@ -1,12 +1,13 @@
 import Table from 'components/Table';
 import { Rows } from 'components/Table/types.ts';
-import Modal from 'components/Modal';
 import useMergeState from '../../hooks/useMergeState.ts';
 import useFetch from '../../hooks/useFetch.ts';
 import { User } from './types.ts';
-import EditUser from './EditUser.tsx';
 import Button from '../../components/Button';
 import { useEffect } from 'react';
+import HelperButtons from './HelperButtons.tsx';
+import AddUserModal from './AddUserModal.tsx';
+import EditUserModal from './EditUserModal.tsx';
 
 const columns = [
   { id: 'shopDomain', title: 'Shop Domain' },
@@ -18,11 +19,13 @@ const columns = [
 
 interface State {
   openUser?: User;
+  isAddNewModalOpen: boolean;
 }
 
 const Users = () => {
   const [state, setState] = useMergeState<State>({
     openUser: undefined,
+    isAddNewModalOpen: false,
   });
 
   const { error, data, loading, fetchData } = useFetch<User[]>({
@@ -40,6 +43,10 @@ const Users = () => {
     setState({ openUser: user });
   };
 
+  const toggleAddNewModal = () => {
+    setState({ isAddNewModalOpen: !state.isAddNewModalOpen });
+  };
+
   const rows: Rows = {
     uniqueId: 'uuid',
     data: data.map((user) => ({
@@ -54,16 +61,21 @@ const Users = () => {
   };
 
   return (
-    <>
+    <div>
+      <HelperButtons toggleAddNewModal={toggleAddNewModal} />
       <Table rows={rows} columns={columns} />
-      <Modal
+      <AddUserModal
+        isOpen={state.isAddNewModalOpen}
+        title="Add new user"
+        close={toggleAddNewModal}
+      />
+      <EditUserModal
         isOpen={Boolean(state.openUser)}
         title={state.openUser?.shopDomain || ''}
         close={() => setState({ openUser: undefined })}
-      >
-        <EditUser user={state.openUser} />
-      </Modal>
-    </>
+        user={state.openUser}
+      />
+    </div>
   );
 };
 

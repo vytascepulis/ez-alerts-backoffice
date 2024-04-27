@@ -7,12 +7,15 @@ import Select from '../../components/Select';
 import { animations } from '../../constants.ts';
 import useFetch from '../../hooks/useFetch.ts';
 import { buildPostBody } from './utils.ts';
+import withModalWrapper, {
+  ModalWrapperProps,
+} from '../../components/ModalWrapper';
 
-interface Props {
+interface Props extends ModalWrapperProps {
   user?: User;
 }
 
-const EditUser = ({ user }: Props) => {
+const EditUserModal = ({ user }: Props) => {
   const refValues = useRef<RefValues>({
     animationIn: user?.settings.display.animationIn,
     animationOut: user?.settings.display.animationOut,
@@ -212,4 +215,4 @@ const EditUser = ({ user }: Props) => {
   );
 };
 
-export default EditUser;
+export default withModalWrapper(EditUserModal);
