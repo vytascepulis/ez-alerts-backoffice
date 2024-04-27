@@ -22,6 +22,7 @@ export interface User {
     };
     useProductImages: boolean;
   };
+  isActive: boolean;
 }
 
 export interface RefValues {

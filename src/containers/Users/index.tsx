@@ -7,6 +7,8 @@ import Button from '../../components/Button';
 import { useEffect } from 'react';
 import HelperButtons from './HelperButtons.tsx';
 import EditUserModal from './EditUserModal.tsx';
+import classNames from 'classnames';
+import style from './style.module.sass';
 
 const columns = [
   { id: 'shopDomain', title: 'Shop Domain' },
@@ -43,7 +45,16 @@ const Users = () => {
   const rows: Rows = {
     uniqueId: 'uuid',
     data: data.map((user) => ({
-      shopDomain: user.shopDomain,
+      shopDomain: (
+        <p className={style.field}>
+          <span
+            className={classNames(style.onlineIndicator, {
+              [style.isActive]: user.isActive,
+            })}
+          />
+          {user.shopDomain}
+        </p>
+      ),
       uuid: user.uuid,
       registeredAt: user.registeredAt,
       isBlocked: (
