@@ -9,7 +9,6 @@ interface Props {
 
 const Table = ({ columns, rows }: Props) => {
   const headerColumnClassname = classnames(style.column, style.header);
-  const rowColumnClassname = classnames(style.column, style.row);
 
   return (
     <table className={style.table}>
@@ -32,7 +31,7 @@ const Table = ({ columns, rows }: Props) => {
                 const columnId = `${rowId}-${columns[idx].id}`;
 
                 return (
-                  <td key={columnId} className={rowColumnClassname}>
+                  <td key={columnId} className={style.column}>
                     {value}
                   </td>
                 );
