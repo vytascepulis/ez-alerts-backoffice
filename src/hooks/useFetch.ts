@@ -2,7 +2,7 @@ import useMergeState from './useMergeState.ts';
 
 interface Props {
   endpoint: string;
-  method?: 'POST' | 'GET' | 'DELETE';
+  method?: 'POST' | 'GET' | 'DELETE' | 'PUT';
 }
 
 interface State<T> {

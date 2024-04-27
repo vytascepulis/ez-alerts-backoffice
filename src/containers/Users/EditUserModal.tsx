@@ -6,7 +6,7 @@ import { useRef } from 'react';
 import Select from '../../components/Select';
 import { animations } from '../../constants.ts';
 import useFetch from '../../hooks/useFetch.ts';
-import { buildPostBody } from './utils.ts';
+import { buildUpdateSettingsBody } from './utils.ts';
 import withModalWrapper, {
   ModalWrapperProps,
 } from '../../components/ModalWrapper';
@@ -26,16 +26,15 @@ const EditUserModal = ({ user }: Props) => {
     textSpecialColor: user?.settings.text.specialColor,
     audio: user?.settings.audio.base64,
     volume: user?.settings.audio.volume,
-    isBlocked: user?.isBlocked,
   });
 
   const {
-    loading: updateUserLoading,
-    error: updateUserError,
-    fetchData: updateUser,
+    loading: updateSettingsLoading,
+    error: updateSettingsError,
+    fetchData: updateSettings,
   } = useFetch({
-    endpoint: `users/${user?.uuid}`,
-    method: 'POST',
+    endpoint: `settings/${user?.uuid}`,
+    method: 'PUT',
   });
 
   const {
@@ -47,24 +46,40 @@ const EditUserModal = ({ user }: Props) => {
     method: 'DELETE',
   });
 
-  const handleBlock = () => {
-    handleOnChange('isBlocked', true);
-    handleSave();
-  };
+  const {
+    loading: fireAlertLoading,
+    error: fireAlertError,
+    fetchData: fireAlert,
+  } = useFetch({
+    endpoint: `test-alert/${user?.uuid}`,
+    method: 'POST',
+  });
 
-  const handleUnblock = () => {
-    handleOnChange('isBlocked', false);
-    handleSave();
+  const {
+    loading: blockUserLoading,
+    error: blockUserError,
+    fetchData: blockUser,
+  } = useFetch({
+    endpoint: `users/${user?.uuid}/block`,
+    method: 'POST',
+  });
+
+  const toggleBlock = () => {
+    blockUser({ isBlocked: !user?.isBlocked }).then((res) => console.log(res));
   };
 
   const handleSave = () => {
-    updateUser(buildPostBody(refValues.current, user)).then((res) =>
-      console.log(res),
+    updateSettings(buildUpdateSettingsBody(refValues.current, user)).then(
+      (res) => console.log(res),
     );
   };
 
   const handleDelete = () => {
     deleteUser().then((res) => console.log(res));
+  };
+
+  const handleFireAlert = () => {
+    fireAlert().then((res) => console.log(res));
   };
 
   const handleOnChange = (field: string, value: string | number | boolean) => {
@@ -77,8 +92,15 @@ const EditUserModal = ({ user }: Props) => {
   const animationsIn = animations.map((animation) => animation[0]);
   const animationsOut = animations.map((animation) => animation[1]);
 
-  if (updateUserError || deleteUserError)
-    return updateUserError || deleteUserError;
+  if (
+    updateSettingsError ||
+    deleteUserError ||
+    fireAlertError ||
+    blockUserError
+  )
+    return (
+      updateSettingsError || deleteUserError || fireAlertError || blockUserError
+    );
 
   if (!user) return null;
 
@@ -106,23 +128,17 @@ const EditUserModal = ({ user }: Props) => {
           />
         </div>
         <div className={style.buttonsWrapper}>
-          <Button
-            onClick={() => {
-              if (user.isBlocked) {
-                handleUnblock();
-                return;
-              }
-
-              handleBlock();
-            }}
-          >
+          <Button disabled={blockUserLoading} onClick={toggleBlock}>
             {user.isBlocked ? 'Unblock' : 'Block'}
           </Button>
-          <Button disabled={updateUserLoading} onClick={handleSave}>
-            {updateUserLoading ? 'Loading...' : 'Save'}
+          <Button disabled={updateSettingsLoading} onClick={handleSave}>
+            Save
           </Button>
           <Button disabled={deleteUserLoading} onClick={handleDelete}>
-            {deleteUserLoading ? 'Loading...' : 'Delete'}
+            Delete
+          </Button>
+          <Button disabled={fireAlertLoading} onClick={handleFireAlert}>
+            Fire test alert
           </Button>
         </div>
       </div>

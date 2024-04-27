@@ -34,5 +34,4 @@ export interface RefValues {
   textSpecialColor?: string;
   audio?: string;
   volume?: number;
-  isBlocked?: boolean;
 }
