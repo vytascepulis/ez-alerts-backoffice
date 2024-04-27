@@ -26,9 +26,22 @@ const EditUser = ({ user }: Props) => {
     isBlocked: user?.isBlocked,
   });
 
-  const { loading, error, fetchData } = useFetch({
+  const {
+    loading: updateUserLoading,
+    error: updateUserError,
+    fetchData: updateUser,
+  } = useFetch({
     endpoint: `users/${user?.uuid}`,
     method: 'POST',
+  });
+
+  const {
+    loading: deleteUserLoading,
+    error: deleteUserError,
+    fetchData: deleteUser,
+  } = useFetch({
+    endpoint: `users/${user?.uuid}`,
+    method: 'DELETE',
   });
 
   const handleBlock = () => {
@@ -42,9 +55,13 @@ const EditUser = ({ user }: Props) => {
   };
 
   const handleSave = () => {
-    fetchData(buildPostBody(refValues.current, user)).then((res) =>
-      console.log('res: ', res),
+    updateUser(buildPostBody(refValues.current, user)).then((res) =>
+      console.log(res),
     );
+  };
+
+  const handleDelete = () => {
+    deleteUser().then((res) => console.log(res));
   };
 
   const handleOnChange = (field: string, value: string | number | boolean) => {
@@ -57,7 +74,9 @@ const EditUser = ({ user }: Props) => {
   const animationsIn = animations.map((animation) => animation[0]);
   const animationsOut = animations.map((animation) => animation[1]);
 
-  if (error) return error;
+  if (updateUserError || deleteUserError)
+    return updateUserError || deleteUserError;
+
   if (!user) return null;
 
   return (
@@ -96,8 +115,11 @@ const EditUser = ({ user }: Props) => {
           >
             {user.isBlocked ? 'Unblock' : 'Block'}
           </Button>
-          <Button disabled={loading} onClick={handleSave}>
-            {loading ? 'Loading...' : 'Save'}
+          <Button disabled={updateUserLoading} onClick={handleSave}>
+            {updateUserLoading ? 'Loading...' : 'Save'}
+          </Button>
+          <Button disabled={deleteUserLoading} onClick={handleDelete}>
+            {deleteUserLoading ? 'Loading...' : 'Delete'}
           </Button>
         </div>
       </div>

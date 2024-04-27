@@ -34,7 +34,7 @@ const Users = () => {
   }, []);
 
   if (error) return error;
-  if (loading || !data) return 'loading';
+  if (loading || !data) return 'Loading...';
 
   const onEditClick = (user: User) => () => {
     setState({ openUser: user });
