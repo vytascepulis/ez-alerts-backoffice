@@ -1,0 +1,9 @@
+dist
+.eslintrc.js
+.prettierrc.js
+tsconfig.json
+vite.*
+package.json
+package-lock.json
+node_modules
+tsconfig*

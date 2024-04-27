@@ -1,0 +1,20 @@
+@import ../../styles/imports
+
+.sidebar
+  background: $white
+  height: calc(100vh - 60px)
+  width: 300px
+  display: flex
+  flex-direction: column
+
+  .routeLink
+    color: $dark
+    font-weight: 800
+    padding: 15px 20px
+    transition: background 100ms ease-in-out
+
+    &:hover
+      background: $lightest
+
+    &.isActive
+      background: $lighter
