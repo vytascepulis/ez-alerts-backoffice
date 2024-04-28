@@ -18,7 +18,7 @@ const useFetch = <T>({ endpoint, method = 'GET' }: Props) => {
     data: null,
   });
 
-  const fetchData = async (body?: T | { message: string }) => {
+  const fetchData = async (body?: T) => {
     try {
       const res = await fetch(
         `${import.meta.env.VITE_SERVER_URL}/${endpoint}`,
@@ -31,10 +31,11 @@ const useFetch = <T>({ endpoint, method = 'GET' }: Props) => {
         },
       );
 
-      if (!res.ok && body) {
+      if (!res.ok) {
+        const json = (await res.json()) as { message: string };
         setState({
-          loading: false, // @ts-expect-error
-          error: 'message' in body ? body.message : 'Something went wrong',
+          loading: false,
+          error: json.message ?? 'Something went wrong',
         });
         return;
       }

@@ -3,7 +3,6 @@ import Button from '../../components/Button';
 import useFetch from '../../hooks/useFetch.ts';
 import InputField from '../../components/InputField';
 import { useRef } from 'react';
-import { v4 as uuidv4 } from 'uuid';
 
 const HelperButtons = () => {
   const refShopDomainInput = useRef<HTMLInputElement | null>(null);
@@ -38,7 +37,6 @@ const HelperButtons = () => {
 
       register({
         shopDomain: refShopDomainInput.current.value,
-        uuid: uuidv4(),
       }).then((res) => console.log(res));
 
       refShopDomainInput.current.value = '';
