@@ -1,0 +1,61 @@
+@import '../../styles/imports'
+
+.toastWrapper
+  position: absolute
+  top: 0
+  left: 0
+  right: 0
+  bottom: 0
+  width: 100vw
+  height: 100vh
+  display: flex
+  justify-content: center
+  align-items: start
+  pointer-events: none
+
+  .toastContainer
+    margin-top: 5vh
+    width: 400px
+    max-height: 500px
+    display: flex
+    flex-direction: column-reverse
+
+.toast
+  width: 400px
+  min-height: 50px
+  margin-bottom: 10px
+  background: $success
+  color: $lightest
+  padding: 20px
+  box-sizing: border-box
+  border-radius: 5px
+  box-shadow: 0 13px 19px 7px rgba(0,0,0,0.1)
+  font-weight: 700
+  pointer-events: all
+  animation: fadeIn 300ms forwards
+
+  &.error
+    background: $error
+
+  &.warning
+    background: $warning
+    color: $dark
+
+  &.disappearing
+    animation: fadeOut 300ms forwards
+
+@keyframes fadeIn
+  0%
+    opacity: 0
+    margin-top: -50px
+  100%
+    opacity: 1
+    margin-top: 0
+
+@keyframes fadeOut
+  0%
+    opacity: 1
+    margin-top: 0
+  100%
+    opacity: 0
+    margin-top: 50px

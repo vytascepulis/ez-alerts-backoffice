@@ -27,15 +27,14 @@ const Users = () => {
     openUser: undefined,
   });
 
-  const { error, data, loading, fetchData } = useFetch<User[]>({
-    endpoint: 'users',
-  });
+  const [fetchUsers, { loading, data }] = useFetch<User[]>();
 
   useEffect(() => {
-    fetchData();
+    fetchUsers({
+      endpoint: 'users',
+    });
   }, []);
 
-  if (error) return error;
   if (loading || !data) return 'Loading...';
 
   const onEditClick = (user: User) => () => {

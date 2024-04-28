@@ -10,12 +10,14 @@ import { buildUpdateSettingsBody } from './utils.ts';
 import withModalWrapper, {
   ModalWrapperProps,
 } from '../../components/ModalWrapper';
+import { useToast } from '../../contexts/ToastProvider';
 
 interface Props extends ModalWrapperProps {
   user?: User;
 }
 
 const EditUserModal = ({ user }: Props) => {
+  const { fireToast } = useToast();
   const refValues = useRef<RefValues>({
     animationIn: user?.settings.display.animationIn,
     animationOut: user?.settings.display.animationOut,
@@ -28,58 +30,49 @@ const EditUserModal = ({ user }: Props) => {
     volume: user?.settings.audio.volume,
   });
 
-  const {
-    loading: updateSettingsLoading,
-    error: updateSettingsError,
-    fetchData: updateSettings,
-  } = useFetch({
-    endpoint: `settings/${user?.uuid}`,
-    method: 'PUT',
-  });
-
-  const {
-    loading: deleteUserLoading,
-    error: deleteUserError,
-    fetchData: deleteUser,
-  } = useFetch({
-    endpoint: `users/${user?.uuid}`,
-    method: 'DELETE',
-  });
-
-  const {
-    loading: fireAlertLoading,
-    error: fireAlertError,
-    fetchData: fireAlert,
-  } = useFetch({
-    endpoint: `test-alert/${user?.uuid}`,
-    method: 'POST',
-  });
-
-  const {
-    loading: blockUserLoading,
-    error: blockUserError,
-    fetchData: blockUser,
-  } = useFetch({
-    endpoint: `users/${user?.uuid}/block`,
-    method: 'POST',
-  });
-
-  const toggleBlock = () => {
-    blockUser({ isBlocked: !user?.isBlocked }).then((res) => console.log(res));
-  };
+  const [updateSettings, updateSettingsData] = useFetch<{ message: string }>();
+  const [deleteUser, deleteUserData] = useFetch<{ message: string }>();
+  const [fireAlert, fireAlertData] = useFetch<{ message: string }>();
+  const [blockUser, blockUserData] = useFetch<{ message: string }>();
 
   const handleSave = () => {
-    updateSettings(buildUpdateSettingsBody(refValues.current, user)).then(
-      (res) => console.log(res),
-    );
+    updateSettings({
+      endpoint: `settings/${user?.uuid}`,
+      method: 'PUT',
+      variables: buildUpdateSettingsBody(refValues.current, user),
+      error: (e) => fireToast({ message: e.message, type: 'error' }),
+      update: (data) => fireToast({ message: data.message, type: 'success' }),
+    });
   };
 
   const handleDelete = () => {
-    deleteUser().then((res) => console.log(res));
+    deleteUser({
+      endpoint: `users/${user?.uuid}`,
+      method: 'DELETE',
+      error: (e) => fireToast({ message: e.message, type: 'error' }),
+      update: (data) => fireToast({ message: data.message, type: 'success' }),
+    });
   };
 
   const handleFireAlert = () => {
-    fireAlert().then((res) => console.log(res));
+    fireAlert({
+      endpoint: `test-alert/${user?.uuid}`,
+      method: 'POST',
+      error: (e) => fireToast({ message: e.message, type: 'error' }),
+      update: (data) => fireToast({ message: data.message, type: 'success' }),
+    });
+  };
+
+  const toggleBlock = () => {
+    blockUser({
+      endpoint: `users/${user?.uuid}/block`,
+      method: 'POST',
+      variables: {
+        isBlocked: !user?.isBlocked,
+      },
+      error: (e) => fireToast({ message: e.message, type: 'error' }),
+      update: (data) => fireToast({ message: data.message, type: 'success' }),
+    });
   };
 
   const handleOnChange = (field: string, value: string | number | boolean) => {
@@ -91,16 +84,6 @@ const EditUserModal = ({ user }: Props) => {
 
   const animationsIn = animations.map((animation) => animation[0]);
   const animationsOut = animations.map((animation) => animation[1]);
-
-  if (
-    updateSettingsError ||
-    deleteUserError ||
-    fireAlertError ||
-    blockUserError
-  )
-    return (
-      updateSettingsError || deleteUserError || fireAlertError || blockUserError
-    );
 
   if (!user) return null;
 
@@ -128,16 +111,16 @@ const EditUserModal = ({ user }: Props) => {
           />
         </div>
         <div className={style.buttonsWrapper}>
-          <Button disabled={blockUserLoading} onClick={toggleBlock}>
+          <Button disabled={blockUserData.loading} onClick={toggleBlock}>
             {user.isBlocked ? 'Unblock' : 'Block'}
           </Button>
-          <Button disabled={updateSettingsLoading} onClick={handleSave}>
+          <Button disabled={updateSettingsData.loading} onClick={handleSave}>
             Save
           </Button>
-          <Button disabled={deleteUserLoading} onClick={handleDelete}>
+          <Button disabled={deleteUserData.loading} onClick={handleDelete}>
             Delete
           </Button>
-          <Button disabled={fireAlertLoading} onClick={handleFireAlert}>
+          <Button disabled={fireAlertData.loading} onClick={handleFireAlert}>
             Fire test alert
           </Button>
         </div>

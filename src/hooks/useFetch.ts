@@ -1,61 +1,89 @@
-import useMergeState from './useMergeState.ts';
-
-interface Props {
-  endpoint: string;
-  method?: 'POST' | 'GET' | 'DELETE' | 'PUT';
-}
+import useMergeState from './useMergeState';
 
 interface State<T> {
   loading: boolean;
-  error: string | null;
+  error: { message: string } | null;
   data: T | null;
 }
 
-const useFetch = <T>({ endpoint, method = 'GET' }: Props) => {
+interface FetchDataOptions<T> {
+  endpoint: string;
+  method?: 'POST' | 'GET' | 'PUT' | 'DELETE';
+  variables?: {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    [key: string]: any;
+  };
+  credentials?: RequestCredentials;
+  headers?: {
+    [key: string]: string;
+  };
+  error?: (error: { message: string }) => void;
+  update?: (result: T) => void;
+}
+
+interface FetchDataInterface<T> {
+  (all: FetchDataOptions<T>): void;
+}
+
+type UseFetchTuple<T> = [FetchDataInterface<T>, State<T>];
+
+export const useFetch = <T>(): UseFetchTuple<T> => {
   const [state, setState] = useMergeState<State<T>>({
     loading: false,
     error: null,
     data: null,
   });
 
-  const fetchData = async (body?: T) => {
-    try {
-      const res = await fetch(
-        `${import.meta.env.VITE_SERVER_URL}/${endpoint}`,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          method,
-          body: JSON.stringify(body),
+  const fetchData = async (variables: FetchDataOptions<T>) => {
+    setState({
+      error: null,
+      loading: true,
+    });
+
+    const response = await fetch(
+      `${import.meta.env.VITE_SERVER_URL}/${variables.endpoint}`,
+      {
+        method: variables.method,
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          ...variables.headers,
         },
-      );
+        body: variables.variables ? JSON.stringify(variables.variables) : null,
+      },
+    );
 
-      if (!res.ok) {
-        const json = (await res.json()) as { message: string };
-        setState({
-          loading: false,
-          error: json.message ?? 'Something went wrong',
+    const result = (await response.json()) as T;
+
+    if (!response.ok) {
+      setState({
+        data: null,
+        loading: false,
+        error: {
+          message: (result as { message: string }).message,
+        },
+      });
+
+      if (variables.error)
+        variables.error({
+          message: (result as { message: string }).message,
         });
-        return;
-      }
 
-      const json = (await res.json()) as T;
-      setState({ loading: false, data: json });
-      return json;
-    } catch (e) {
-      if (e instanceof Error) {
-        setState({ loading: false, error: e.message });
-      }
+      return;
+    }
+
+    setState({
+      data: result,
+      loading: false,
+      error: null,
+    });
+
+    if (variables.update) {
+      variables.update(result);
     }
   };
 
-  return {
-    loading: state.loading,
-    error: state.error,
-    data: state.data,
-    fetchData,
-  };
+  return [fetchData, state];
 };
 
 export default useFetch;

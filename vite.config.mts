@@ -8,7 +8,7 @@ export default defineConfig({
   plugins: [
     react(),
     checker({
-      overlay: false,
+      overlay: true,
       eslint: {
         lintCommand: 'eslint "./src/**/*.{ts,tsx}"',
       },
