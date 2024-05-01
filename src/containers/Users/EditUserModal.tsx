@@ -28,6 +28,8 @@ const EditUserModal = ({ user }: Props) => {
     textSpecialColor: user?.settings.text.specialColor,
     audio: user?.settings.audio.base64,
     volume: user?.settings.audio.volume,
+    audioName: user?.settings.audio.fileName,
+    imageName: user?.settings.image.fileName,
   });
 
   const [updateSettings, updateSettingsData] = useFetch<{ message: string }>();
@@ -170,6 +172,12 @@ const EditUserModal = ({ user }: Props) => {
             defaultValue={user.settings.image.base64}
             onChange={(e) => handleOnChange('image', e.target.value)}
           />
+          <InputField
+            id="imageName"
+            label="Image file name"
+            defaultValue={user.settings.image.fileName}
+            onChange={(e) => handleOnChange('imageName', e.target.value)}
+          />
         </div>
         <img
           className={style.alertImage}
@@ -195,6 +203,12 @@ const EditUserModal = ({ user }: Props) => {
             label="Audio base64"
             defaultValue={user.settings.audio.base64}
             onChange={(e) => handleOnChange('audio', e.target.value)}
+          />
+          <InputField
+            id="audioName"
+            label="Audio file name"
+            defaultValue={user.settings.audio.fileName}
+            onChange={(e) => handleOnChange('audioName', e.target.value)}
           />
           <InputField
             id="volume"

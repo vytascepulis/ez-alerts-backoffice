@@ -14,10 +14,12 @@ export interface User {
       animationOut: string;
     };
     audio: {
+      fileName: string;
       volume: number;
       base64: string;
     };
     image: {
+      fileName: string;
       base64: string;
     };
     useProductImages: boolean;
@@ -35,4 +37,6 @@ export interface RefValues {
   textSpecialColor?: string;
   audio?: string;
   volume?: number;
+  imageName?: string;
+  audioName?: string;
 }

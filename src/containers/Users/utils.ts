@@ -18,9 +18,11 @@ export const buildUpdateSettingsBody = (refValues: RefValues, user?: User) => {
       ...user?.settings.audio,
       volume: refValues.volume,
       base64: refValues.audio,
+      fileName: refValues.audioName,
     },
     image: {
       base64: refValues.image,
+      fileName: refValues.imageName,
     },
     useProductImages: refValues.useProductImages,
   };
