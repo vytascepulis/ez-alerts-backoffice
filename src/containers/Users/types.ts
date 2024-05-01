@@ -25,6 +25,7 @@ export interface User {
     useProductImages: boolean;
   };
   isActive: boolean;
+  activeClients: string[];
 }
 
 export interface RefValues {

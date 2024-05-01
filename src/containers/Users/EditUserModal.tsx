@@ -32,6 +32,8 @@ const EditUserModal = ({ user }: Props) => {
     imageName: user?.settings.image.fileName,
   });
 
+  const activeClients = user?.activeClients.join('\r\n');
+
   const [updateSettings, updateSettingsData] = useFetch<{ message: string }>();
   const [deleteUser, deleteUserData] = useFetch<{ message: string }>();
   const [fireAlert, fireAlertData] = useFetch<{ message: string }>();
@@ -112,19 +114,27 @@ const EditUserModal = ({ user }: Props) => {
             disabled
           />
         </div>
-        <div className={style.buttonsWrapper}>
-          <Button disabled={blockUserData.loading} onClick={toggleBlock}>
-            {user.isBlocked ? 'Unblock' : 'Block'}
-          </Button>
-          <Button disabled={updateSettingsData.loading} onClick={handleSave}>
-            Save
-          </Button>
-          <Button disabled={deleteUserData.loading} onClick={handleDelete}>
-            Delete
-          </Button>
-          <Button disabled={fireAlertData.loading} onClick={handleFireAlert}>
-            Fire test alert
-          </Button>
+        <div className={style.handlersWrapper}>
+          <div className={style.buttonsWrapper}>
+            <Button disabled={blockUserData.loading} onClick={toggleBlock}>
+              {user.isBlocked ? 'Unblock' : 'Block'}
+            </Button>
+            <Button disabled={updateSettingsData.loading} onClick={handleSave}>
+              Save
+            </Button>
+            <Button disabled={deleteUserData.loading} onClick={handleDelete}>
+              Delete
+            </Button>
+            <Button disabled={fireAlertData.loading} onClick={handleFireAlert}>
+              Fire test alert
+            </Button>
+          </div>
+          <textarea
+            defaultValue={activeClients}
+            disabled
+            className={style.clientsTextarea}
+            rows={5}
+          />
         </div>
       </div>
       <hr />
